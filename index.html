@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1, user-scalable=yes" name="viewport">
+    <meta content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" name="robots">
+    <title>Guía de creación de proyecto - TEAMWORK API</title>
+    <meta content="Guía paso a paso para la creación de un proyecto con Entity Framework, MySQL y Swagger" name="description">
+    
+    <style>
+        /* Critical CSS - Estilos base */
+        :root {
+            --bg-primary: #0a0c10;
+            --bg-secondary: #14171c;
+            --bg-card: #1a1d24;
+            --text-primary: #e4e6eb;
+            --text-secondary: #b0b3b8;
+            --text-muted: #6c757d;
+            --border-color: #2d3139;
+            --accent-blue: #5281b0;
+            --accent-cyan: #4ecdc4;
+            --accent-green: #2ecc71;
+            --accent-yellow: #f1c40f;
+            --accent-red: #e74c3c;
+            --code-bg: #0d1117;
+            --code-border: #30363d;
+            --hover-bg: rgba(82, 129, 176, 0.1);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+            --accent-blue: #007acc;
+            --accent-cyan: #009688;
+            --accent-green: #27ae60;
+            --accent-yellow: #f39c12;
+            --accent-red: #e74c3c;
+            --code-bg: #f6f8fa;
+            --code-border: #e1e4e8;
+            --hover-bg: rgba(0, 122, 204, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-secondary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .site-header {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .toplogo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toplogo-container img {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+        }
+
+        .toplogo-container a {
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .toplogo-container p {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .topbar-settings {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--hover-bg);
+            color: var(--accent-blue);
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .light { display: none; }
+        .dark { display: inline; }
+        [data-theme="light"] .light { display: inline; }
+        [data-theme="light"] .dark { display: none; }
+
+        /* Main Layout */
+        .page {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .row {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .rowcontent {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Sidebar */
+        .sidebar-left {
+            width: 280px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 80px;
+            height: fit-content;
+        }
+
+        .sidebar-widget {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-widget > div:first-child {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-widget p {
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .sidebar-categories ul {
+            list-style: none;
+        }
+
+        .sidebar-categories li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-categories a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .sidebar-categories a:hover,
+        .sidebar-categories .active a {
+            background-color: var(--hover-bg);
+            color: var(--accent-blue);
+        }
+
+        .sidebar-categories img {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Article */
+        .articleheader {
+            margin-bottom: 2rem;
+        }
+
+        .articleheader img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 0.75rem;
+            color: var(--accent-cyan);
+        }
+
+        .articleheader-meta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .articlecontent {
+            background-color: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Code blocks */
+        pre {
+            background-color: var(--code-bg);
+            border: 1px solid var(--code-border);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.875rem;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Cascadia Code', monospace;
+            background-color: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.875em;
+            color: var(--accent-cyan);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: var(--text-secondary);
+        }
+
+        /* Tables */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--hover-bg);
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        tr:hover {
+            background-color: var(--hover-bg);
+        }
+
+        /* Cards and boxes */
+        .lll-box {
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+        }
+
+        .lll-cyan {
+            background-color: rgba(78, 205, 196, 0.1);
+            border-left-color: var(--accent-cyan);
+        }
+
+        .lll-blue {
+            background-color: rgba(82, 129, 176, 0.1);
+            border-left-color: var(--accent-blue);
+        }
+
+        .lll-green {
+            background-color: rgba(46, 204, 113, 0.1);
+            border-left-color: var(--accent-green);
+        }
+
+        .lll-box-content p {
+            margin: 0;
+        }
+
+        /* Dropdown cards */
+        .article-card {
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .dropdown-header {
+            padding: 1rem;
+            cursor: pointer;
+            background-color: var(--bg-secondary);
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-header:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .dropdown-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .dropdown-content {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--bg-card);
+        }
+
+        /* Step indicator */
+        .step {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: bold;
+            font-size: 0.875rem;
+            margin-right: 0.75rem;
+        }
+
+        .step-title {
+            display: flex;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            margin-top: 3rem;
+        }
+
+        .mainfooter {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footerlogo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footerlogo-container img {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+        }
+
+        .footerlogo-container p:first-of-type {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .creative-img {
+            margin-top: 0.5rem;
+        }
+
+        .sidebarsocial {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-icon {
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .social-icon:hover {
+            color: var(--accent-blue);
+        }
+
+        .social-svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .bottombar {
+            border-top: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Back to top */
+        #back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 1.25rem;
+        }
+
+        #back-to-top.visible {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .row {
+                flex-direction: column;
+            }
+            .sidebar-left {
+                width: 100%;
+                position: static;
+            }
+            .page {
+                padding: 1rem;
+            }
+            .articlecontent {
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body data-pos="top">
+    <header>
+        <div class="site-header">
+            <div class="toplogo-container">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%235281b0'/%3E%3Ctext x='32' y='44' text-anchor='middle' fill='white' font-size='32' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E" alt="Logo">
+                <a href="#"><p>TEAMWORK API</p></a>
+            </div>
+            <div class="topbar-settings">
+                <button class="theme-toggle" aria-label="theme-toggle" id="themeToggle">
+                    <span class="light"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
+                    <span class="dark"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="row">
+            <aside class="sidebar-left">
+                <div class="sidebar-widget sidebar-categories">
+                    <div><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg><p>Secciones</p></div>
+                    <ul>
+                        <li class="active"><a href="#"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 24 24'%3E%3Cpath d='M4 4h16v16H4z'/%3E%3C/svg%3E" alt="">Guía de Creación</a></li>
+                        <li><a href="#entity-framework"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 24 24'%3E%3Cpath d='M4 4h16v16H4z'/%3E%3C/svg%3E" alt="">Entity Framework</a></li>
+                        <li><a href="#swagger"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 24 24'%3E%3Cpath d='M4 4h16v16H4z'/%3E%3C/svg%3E" alt="">Swagger</a></li>
+                        <li><a href="#controladores"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 24 24'%3E%3Cpath d='M4 4h16v16H4z'/%3E%3C/svg%3E" alt="">Controladores API</a></li>
+                    </ul>
+                </div>
+                <div class="sidebar-widget">
+                    <div><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><p>Pasos Rápidos</p></div>
+                    <ul style="list-style: none; padding-left: 0;">
+                        <li style="margin-bottom: 0.5rem;">1. Instalar Pomelo</li>
+                        <li style="margin-bottom: 0.5rem;">2. Scaffold-DbContext</li>
+                        <li style="margin-bottom: 0.5rem;">3. Anular conexión</li>
+                        <li style="margin-bottom: 0.5rem;">4. Swagger</li>
+                        <li style="margin-bottom: 0.5rem;">5. Configurar Startup</li>
+                        <li style="margin-bottom: 0.5rem;">6. Crear Controladores</li>
+                    </ul>
+                </div>
+            </aside>
+
+            <div class="rowcontent">
+                <article>
+                    <div class="articleheader">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 266'%3E%3Crect width='400' height='266' fill='%231a1d24'/%3E%3Ctext x='200' y='133' text-anchor='middle' fill='%235281b0' font-size='20'%3EAPI Project%3C/text%3E%3C/svg%3E" alt="API Project">
+                        <h1>Guía de creación de proyecto con Entity Framework</h1>
+                        <ul class="articleheader-meta">
+                            <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> <span>5 min</span></li>
+                            <li><div class="easy signal-icon" title="Intermedio">⚡ Intermedio</div></li>
+                        </ul>
+                    </div>
+
+                    <div class="articlecontent">
+                        <p>Esta guía te mostrará paso a paso cómo configurar un proyecto .NET Core con <strong>Entity Framework Core</strong>, <strong>MySQL</strong> y <strong>Swagger</strong> para crear una API RESTful completa. Sigue cada paso cuidadosamente.</p>
+
+                        <div class="lll-box lll-cyan">
+                            <div class="lll-box-content">
+                                <p><strong>📌 Requisitos previos:</strong> Tener instalado .NET Core SDK 2.2+, MySQL Server, y un editor como Visual Studio o VS Code.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-title">
+                            <span class="step">1</span>
+                            <h2 id="entity-framework">Instalación de Pomelo.EntityFrameworkCore.MySql</h2>
+                        </div>
+                        <p>Primero, instala el paquete necesario para conectar Entity Framework con MySQL:</p>
+                        <pre><code>dotnet add package Pomelo.EntityFrameworkCore.MySql --version 2.2.0</code></pre>
+                        <p>O desde la consola de NuGet:</p>
+                        <pre><code>Install-Package Pomelo.EntityFrameworkCore.MySql -Version 2.2.0</code></pre>
+
+                        <div class="step-title">
+                            <span class="step">2</span>
+                            <h2>Scaffolding de la Base de Datos</h2>
+                        </div>
+                        <p>Ejecuta el siguiente comando para generar los modelos a partir de tu base de datos existente:</p>
+                        <pre><code>Scaffold-DbContext "server=localhost;database=teamworkbd;user=root;password=;" Pomelo.EntityFrameworkCore.MySql -OutputDir Models -Context DbteamworkbdContex</code></pre>
+                        <div class="lll-box lll-blue">
+                            <div class="lll-box-content">
+                                <p><strong>💡 Nota:</strong> Asegúrate de que la base de datos <code>teamworkbd</code> exista en tu servidor MySQL antes de ejecutar este comando.</p>
+                            </div>
+                        </div>
+
+                        <div class="step-title">
+                            <span class="step">3</span>
+                            <h2>Anular la conexión en el Contexto</h2>
+                        </div>
+                        <p>Después del scaffolding, ve al archivo <code>DbteamworkbdContex.cs</code> y comenta o elimina la configuración de conexión en el método <code>OnConfiguring</code>:</p>
+                        <pre><code>//            if (!optionsBuilder.IsConfigured)
+//            {
+//#warning To protect potentially sensitive information...
+//                optionsBuilder.UseMySql("server=localhost;database=teamworkbd;user=root;password=;");
+//            }</code></pre>
+                        <p>Esto es importante porque la conexión se configurará desde <code>appsettings.json</code> en lugar de estar hardcodeada.</p>
+
+                        <div class="step-title">
+                            <span class="step">4</span>
+                            <h2>Instalación de Swagger</h2>
+                        </div>
+                        <p>Para documentar tu API, instala Swashbuckle:</p>
+                        <pre><code>dotnet add package Swashbuckle.AspNetCore.Swagger --version 2.2.0</code></pre>
+                        <p>O desde NuGet:</p>
+                        <pre><code>Install-Package Swashbuckle.AspNetCore.Swagger -Version 2.2.0</code></pre>
+
+                        <div class="step-title">
+                            <span class="step">5</span>
+                            <h2>Configuración de appsettings.json</h2>
+                        </div>
+                        <p>Agrega la cadena de conexión a tu archivo <code>appsettings.json</code>:</p>
+                        <pre><code>{
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DefaultConnection": "server=localhost;database=teamworkbd;user=root;password=;"
+  }
+}</code></pre>
+
+                        <div class="step-title">
+                            <span class="step">6</span>
+                            <h2 id="startup">Configuración de Startup.cs</h2>
+                        </div>
+                        <p>Configura los servicios en el método <code>ConfigureServices</code> de <code>Startup.cs</code>:</p>
+                        <pre><code>using TEAMWORK.Models;
+using Microsoft.EntityFrameworkCore;
+using Swashbuckle.AspNetCore.Swagger;
+
+public void ConfigureServices(IServiceCollection services)
+{
+    // Cadena de conexión con parámetros requeridos
+    services.AddDbContext&lt;DbteamworkbdContex&gt;(options => 
+        options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+    
+    services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+    
+    // Configuración de Swagger
+    services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new Info { Title = "TEAMWORK API", Version = "v1" });
+    });
+}
+
+public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+{
+    if (env.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+    }
+    
+    // Habilitar Swagger
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "TEAMWORK API V1");
+    });
+    
+    app.UseMvc();
+}</code></pre>
+
+                        <div class="step-title">
+                            <span class="step">7</span>
+                            <h2 id="controladores">Creación de Controladores API</h2>
+                        </div>
+                        <p>Sigue estos pasos para crear los controladores:</p>
+                        <div class="article-card">
+                            <div class="dropdown-header" onclick="toggleDropdown(this)">
+                                <h3>📋 Pasos detallados para crear controladores</h3>
+                            </div>
+                            <div class="dropdown-content" style="display: none;">
+                                <ol style="margin-left: 1.5rem;">
+                                    <li>Haz clic derecho en la carpeta <strong>Controllers</strong></li>
+                                    <li>Selecciona <strong>Agregar → Controlador</strong></li>
+                                    <li>Elige la opción <strong>"Controlador de API con acciones que usan Entity Framework"</strong></li>
+                                    <li>Selecciona el modelo correspondiente</li>
+                                    <li>Selecciona <code>DbteamworkbdContex</code> como contexto de datos</li>
+                                    <li>Haz clic en <strong>Agregar</strong></li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <h2 id="swagger">Verificación de Swagger</h2>
+                        <p>Una vez completada la configuración, ejecuta el proyecto y navega a:</p>
+                        <pre><code>https://localhost:5001/swagger</code></pre>
+                        <p>Deberías ver la interfaz de Swagger con todos tus endpoints documentados automáticamente.</p>
+
+                        <div class="lll-box lll-green">
+                            <div class="lll-box-content">
+                                <p><strong>✅ Resumen de paquetes instalados:</strong></p>
+                                <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                    <li>Pomelo.EntityFrameworkCore.MySql (2.2.0)</li>
+                                    <li>Swashbuckle.AspNetCore.Swagger (2.2.0)</li>
+                                    <li>Microsoft.EntityFrameworkCore (dependencia incluida)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="article-card">
+                            <div class="dropdown-header" onclick="toggleDropdown(this)">
+                                <h3>📊 Estructura del proyecto final</h3>
+                            </div>
+                            <div class="dropdown-content" style="display: none;">
+                                <div class="table-wrap">
+                                    <table>
+                                        <thead><tr><th>Carpeta/Archivo</th><th>Descripción</th></tr></thead>
+                                        <tbody>
+                                            <tr><td><code>Models/</code></td><td>Modelos generados desde la BD</td></tr>
+                                            <tr><td><code>Controllers/</code></td><td>Controladores API creados</td></tr>
+                                            <tr><td><code>appsettings.json</code></td><td>Configuración y cadena de conexión</td></tr>
+                                            <tr><td><code>Startup.cs</code></td><td>Configuración de servicios y Swagger</td></tr>
+                                            <tr><td><code>DbteamworkbdContex.cs</code></td><td>DbContext de Entity Framework</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lll-box lll-blue">
+                            <div class="lll-box-content">
+                                <p><strong>⚠️ Nota importante:</strong> Los valores de consumo energético que hemos visto están extraídos de la información oficial y se refieren únicamente al consumo del ESP32.</p>
+                                <p>Si tu ESP32 está montado en una placa, con un LED, un regulador de voltaje, y a saber cuantas cosas más, eso NO está incluido.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <nav class="navnextprev" style="margin-top: 2rem;">
+                        <div class="navprevnext-buttons" style="display: flex; justify-content: space-between; gap: 1rem;">
+                            <a href="#" style="display: inline-block; padding: 0.75rem 1.5rem; background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 8px; text-decoration: none; color: var(--text-primary);">← Anterior</a>
+                            <a href="#" style="display: inline-block; padding: 0.75rem 1.5rem; background-color: var(--accent-blue); border-radius: 8px; text-decoration: none; color: white;">Siguiente →</a>
+                        </div>
+                    </nav>
+                </article>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="mainfooter">
+            <div>
+                <div class="footerlogo-container">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%235281b0'/%3E%3Ctext x='32' y='44' text-anchor='middle' fill='white' font-size='32' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E" alt="Logo">
+                    <a href="#"><p>TEAMWORK API</p><p>Documentación de proyecto</p></a>
+                </div>
+            </div>
+            <div>
+                <p>Guía completa para la creación de API con Entity Framework, MySQL y Swagger</p>
+            </div>
+            <div>
+                <div class="sidebarsocial">
+                    <a href="#" class="social-icon"><svg class="social-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.604-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg></a>
+                    <a href="#" class="social-icon"><svg class="social-svg" viewBox="0 0 24 24" fill="currentColor"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 0021.466-12.01c0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></a>
+                </div>
+            </div>
+        </div>
+        <div class="bottombar">
+            <div>Copyright ©2026, Documentación del proyecto TEAMWORK API</div>
+        </div>
+    </footer>
+
+    <button id="back-to-top" class="collapsed" aria-label="Volver arriba">▲</button>
+
+    <script>
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        
+        const savedTheme = localStorage.getItem('mode') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('mode', newTheme);
+        });
+
+        // Dropdown toggle
+        function toggleDropdown(element) {
+            const content = element.nextElementSibling;
+            if (content.style.display === 'none' || !content.style.display) {
+                content.style.display = 'block';
+            } else {
+                content.style.display = 'none';
+            }
+        }
+
+        // Back to top button
+        const backToTop = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+        
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Initialize dropdowns
+        document.querySelectorAll('.dropdown-content').forEach(content => {
+            content.style.display = 'none';
+        });
+    </script>
+</body>
+</html>

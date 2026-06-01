@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NewProyect - Panel Admin</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+    <header>
+        <div class="site-header">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">S</div>
+                <span>NewProyect Admin</span>
+            </a>
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="theme-toggle">
+                    <span class="light"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
+                    <span class="dark"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+                </button>
+                <a href="index.html" class="header-btn">🏪 <span>Tienda</span></a>
+                <a href="#" class="header-btn" onclick="logout()">🚪 <span>Salir</span></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="admin-page">
+        <div class="admin-header">
+            <h2>Panel de Administracion</h2>
+            <span style="color:var(--accent-cyan);font-weight:600;">Admin: <span id="adminName"></span></span>
+        </div>
+
+        <div class="admin-tabs">
+            <div class="admin-tab active" data-target="tabProductos">Productos</div>
+            <div class="admin-tab" data-target="tabCategorias">Categorias</div>
+            <div class="admin-tab" data-target="tabPedidos">Pedidos / Ventas</div>
+        </div>
+
+        <div class="admin-panel" id="tabProductos"></div>
+        <div class="admin-panel" id="tabCategorias" style="display:none;"></div>
+        <div class="admin-panel" id="tabPedidos" style="display:none;"></div>
+
+        <div class="admin-panel" id="tabVentas" style="display:none;"></div>
+    </main>
+
+    <div class="modal-overlay" id="adminModal">
+        <div class="modal" id="adminModalContent"></div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/productos.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+        const html = document.documentElement;
+        const savedTheme = localStorage.getItem('mode') || 'dark';
+        html.setAttribute('data-theme', savedTheme);
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('mode', newTheme);
+        });
+
+        const user = getUser();
+        if (user) {
+            document.getElementById('adminName').textContent = user.usuario;
+        }
+        initAdmin();
+    </script>
+</body>
+</html>
